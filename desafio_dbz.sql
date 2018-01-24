@@ -347,14 +347,83 @@ GO
                     END */
         END
  
-        EXEC DBZ_BuscaInfoPersonagem 10;
+        EXEC DBZ_BuscaInfoPersonagem 12;
+GO
+
+USE db_Desafio
 
 GO
 
+CREATE PROCEDURE DBZ_RightJoin(
+    @ID SMALLINT
+)
+AS
+    BEGIN 
+        SELECT TP.id_Personagem, TP.nome_Personagem, TC.id_Classe, TC.desc_Classe
+            FROM tbl_Personagem AS TP
+                RIGHT JOIN tbl_Classe AS TC 
+                    ON TP.id_Classe = TC.id_Classe
+          --WHERE TP.id_Classe = @ID;
+    END 
+
+GO
+
+--TRANSACTION RIGHT JOIN
+BEGIN TRANSACTION 
+    EXEC DBZ_RightJoin 15
+ROLLBACK TRANSACTION
+
+DROP PROCEDURE  DBZ_RightJoin
+
+GO 
+
+CREATE PROCEDURE DBZ_LeftJoin(
+    @ID SMALLINT 
+)
+AS 
+    BEGIN 
+        SELECT TR.id_Raca, TR.nome_Raca, TIF.desc_Raca
+            FROM tbl_Raca AS TR
+                LEFT JOIN tbl_infoRaca AS TIF
+                    ON TR.id_Raca = TIF.id_Raca
+            WHERE TR.id_Raca = @ID
+    END 
+
+DROP PROCEDURE DBZ_LeftJoin
+
+GO 
+
+CREATE PROCEDURE DBZ_SelectPersonagemDinamica(
+    @Tabela VARCHAR(50),
+    @Colunas VARCHAR(500),
+    @ChaveTabela VARCHAR(50),
+    @ChaveValor VARCHAR(50) = NULL
+)
+AS 
+    BEGIN 
+        DECLARE @Comando VARCHAR(2000)
+
+        SET @Comando = 'SELECT ' +@Colunas + ' FROM ' +@Tabela+ ' WHERE ' +@ChaveTabela+ ' = ' + ISNULL(@ChaveValor, 0)
+        EXEC(@Comando)
+    END 
+GO
+
+BEGIN TRANSACTION 
+    EXEC DBZ_SelectPersonagemDinamica 'tbl_Personagem', 'id_Personagem, nome_Personagem, powerLevel_Personagem', 'id_Personagem', '17'
+ROLLBACK TRANSACTION 
+
+
+--TRANSACTION LEFT JOIN
+BEGIN TRANSACTION 
+    EXEC DBZ_LeftJoin 1
+ROLLBACK TRANSACTION
+
+GO 
 
 --COMEÇANDO USAR TRANSACTIONS
 BEGIN TRANSACTION
-    DELETE FROM tbl_Personagem
+    EXEC DBZ_ExcluiPersonagem 12;
 ROLLBACK TRANSACTION
 
 EXEC DBZ_SelectPersonagem
+
