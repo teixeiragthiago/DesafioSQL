@@ -34,7 +34,7 @@ CREATE TABLE tbl_Raca(
 )
 --Fim tabela Raça
 
-
+------------------------------------------------------------------------------------
 --Inicio tabela Info Raça
 CREATE TABLE tbl_infoRaca(
     desc_Raca VARCHAR(100) NOT NULL
@@ -55,7 +55,7 @@ CREATE TABLE tbl_Classe(
 
 --Início da Procedures de Classe
 GO
-
+------------------------------------------------------------------------------------
     CREATE PROCEDURE DBZ_SelectClasse
         AS 
             BEGIN
@@ -64,7 +64,7 @@ GO
 
             --EXEC DBZ_SelectClasse;
 GO 
-
+------------------------------------------------------------------------------------
     CREATE PROCEDURE DBZ_InsertClasse(
         @DescClasse VARCHAR(5)
     )
@@ -84,7 +84,7 @@ GO
 
 
 GO
-
+------------------------------------------------------------------------------------
     CREATE PROCEDURE DBZ_AlteraClasse(
         @ID SMALLINT,
         @DescClasse VARCHAR(5)
@@ -99,7 +99,7 @@ GO
         --EXEC DBZ_AlteraClasse 2, 'BAIXA';
 
 GO
-
+------------------------------------------------------------------------------------
     CREATE PROCEDURE DBZ_ExcluiClasse(
         @ID SMALLINT
     )
@@ -113,15 +113,15 @@ GO
 --Início das procedures de Raça
 
 GO
+------------------------------------------------------------------------------------
     CREATE PROCEDURE DBZ_SelectRaca
         AS
             BEGIN
                 SELECT * FROM tbl_Raca
             END
-
             --EXEC DBZ_SelectRaca;
-
 GO
+------------------------------------------------------------------------------------
     CREATE PROCEDURE DBZ_InsertRaca(
         @NomeRaca VARCHAR(100)
     )
@@ -145,6 +145,7 @@ GO
         EXEC DBZ_InsertRaca 'Anjo';
         EXEC DBZ_InsertRaca 'Hakaishin';
 GO
+------------------------------------------------------------------------------------
     CREATE PROCEDURE DBZ_AlteraRaca(
         @ID SMALLINT,
         @NomeRaca VARCHAR (100)
@@ -157,6 +158,7 @@ GO
         END
 
 GO
+------------------------------------------------------------------------------------
     CREATE PROCEDURE DBZ_ExcluiRaca(
         @ID SMALLINT
     )
@@ -170,7 +172,7 @@ GO
 
 
 --Aqui começam as procedures de Personagem
-
+------------------------------------------------------------------------------------
 GO 
     CREATE PROCEDURE DBZ_SelectPersonagem
         AS
@@ -178,7 +180,7 @@ GO
                 SELECT * FROM tbl_Personagem;
             END
             EXEC DBZ_SelectPersonagem
-
+------------------------------------------------------------------------------------
 GO
     CREATE PROCEDURE DBZ_InsertPersonagem(
         @NomePersonagem VARCHAR(100),
@@ -216,7 +218,7 @@ GO
 TRUNCATE TABLE tbl_Personagem;
 
 EXEC DBZ_SelectPersonagem
-
+------------------------------------------------------------------------------------
 GO
     CREATE PROCEDURE DBZ_AlteraPersonagem(
         @ID SMALLINT,
@@ -234,7 +236,7 @@ GO
                 WHERE 
                     id_Personagem = @ID;
         END
-
+------------------------------------------------------------------------------------
 GO
     CREATE PROCEDURE DBZ_ExcluiPersonagem(
         @ID SMALLINT
@@ -246,7 +248,7 @@ GO
         END
 --Aqui terminamam as procedures de Personagem
 GO 
-
+------------------------------------------------------------------------------------
 --Aqui começam as procedures das Informações das Raças
     CREATE PROCEDURE DBZ_SelectInformacoesRaca
     AS
@@ -254,7 +256,7 @@ GO
             SELECT * FROM tbl_infoRaca
         END
 
-
+------------------------------------------------------------------------------------
 GO 
     CREATE PROCEDURE DBZ_InsertInformacoesRaca(
         @ID SMALLINT,
@@ -287,7 +289,7 @@ EXEC DBZ_SelectInformacoesRaca
 
 EXEC DBZ_AlteraRaca 3, 'Namekuseijin';
 GO 
-
+------------------------------------------------------------------------------------
     CREATE PROCEDURE DBZ_AlteraInformacoesRaca(
         @ID SMALLINT,
         @Descricao VARCHAR(255)
@@ -310,7 +312,7 @@ GO
         END 
 GO 
 --Aqui terminam as procedures das informações das raças
-
+------------------------------------------------------------------------------------
 GO 
     CREATE PROCEDURE DBZ_BuscaInfoPersonagem(
         @ID SMALLINT
@@ -353,7 +355,7 @@ GO
 USE db_Desafio
 
 GO
-
+------------------------------------------------------------------------------------
 CREATE PROCEDURE DBZ_RightJoin(
     @ID SMALLINT
 )
@@ -367,7 +369,7 @@ AS
     END 
 
 GO
-
+------------------------------------------------------------------------------------
 --TRANSACTION RIGHT JOIN
 BEGIN TRANSACTION 
     EXEC DBZ_RightJoin 15
@@ -376,7 +378,7 @@ ROLLBACK TRANSACTION
 DROP PROCEDURE  DBZ_RightJoin
 
 GO 
-
+------------------------------------------------------------------------------------
 CREATE PROCEDURE DBZ_LeftJoin(
     @ID SMALLINT 
 )
@@ -390,10 +392,9 @@ AS
     END 
 
 DROP PROCEDURE DBZ_LeftJoin
-
+----------------------------------------------------------------------------------
 GO 
-
-CREATE PROCEDURE DBZ_SelectPersonagemDinamica(
+CREATE PROCEDURE DBZ_SelectDinamica(
     @Tabela VARCHAR(50),
     @Colunas VARCHAR(500),
     @ChaveTabela VARCHAR(50),
@@ -407,11 +408,63 @@ AS
         EXEC(@Comando)
     END 
 GO
-
+--DROP PROCEDURE DBZ_InsertDinamica ---------------------------------------------
+GO 
+CREATE PROCEDURE DBZ_InsertDinamica(
+    @Tabela VARCHAR(50),
+    @Colunas VARCHAR(500),
+    @Valores VARCHAR(500)
+)
+AS
+    BEGIN 
+        DECLARE @Comando VARCHAR(2000)
+        SET @Comando = 'INSERT INTO ' + @Tabela + '('+@Colunas+') VALUES ' + ' (' +@Valores+')'
+        EXEC (@Comando)
+    END 
+GO 
+-----------------------------------------------------------------------------------
+GO 
+CREATE PROCEDURE DBZ_ExcluiDinamica(
+    @Tabela VARCHAR(50),
+    @ChaveTabela VARCHAR(50),
+    @ValorChave VARCHAR(50) 
+)
+AS 
+    BEGIN 
+        DECLARE @Comando VARCHAR(2000)
+        SET @Comando = 'DELETE FROM ' + @Tabela + ' WHERE ' +@ChaveTabela + ' = ' + @ValorChave 
+        EXEC (@Comando)
+    END 
+GO 
+------------------------------------------------------------------------------------
+CREATE PROCEDURE DBZ_AlteraDinamica(
+    @Tabela VARCHAR(50),
+    @ChaveTabela VARCHAR(50),
+    @ValorChave VARCHAR(50),
+)
+AS 
+    BEGIN 
+        DECLARE @Comando VARCHAR(2000)
+        SET @Comando = 'UPDATE ' + @Tabela + 'SET '   
+    END 
+------------------------------------------------------------------------------------
+GO 
+--PROC PARA SELECIONAR DINAMICAMENTE
 BEGIN TRANSACTION 
-    EXEC DBZ_SelectPersonagemDinamica 'tbl_Personagem', 'id_Personagem, nome_Personagem, powerLevel_Personagem', 'id_Personagem', '17'
+    EXEC DBZ_SelectDinamica 'tbl_Personagem', 'id_Personagem, nome_Personagem, powerLevel_Personagem', 'id_Personagem', '17'
 ROLLBACK TRANSACTION 
 
+GO 
+
+--PROC PARA INSERIR DINAMICAMENTE
+BEGIN TRANSACTION 
+    EXEC DBZ_InsertDinamica 'tbl_Personagem', 'nome_Personagem, powerLevel_Personagem, id_Raca, id_Classe', 'Thiago, 10, 4, 2'
+ROLLBACK TRANSACTION 
+
+--PROC PARA EXCLUIR DINAMICAMENTE 
+BEGIN TRANSACTION 
+    EXEC DBZ_ExcluiDinamica 'tbl_Personagem', 'id_Personagem', '13'
+ROLLBACK TRANSACTION 
 
 --TRANSACTION LEFT JOIN
 BEGIN TRANSACTION 
@@ -424,6 +477,4 @@ GO
 BEGIN TRANSACTION
     EXEC DBZ_ExcluiPersonagem 12;
 ROLLBACK TRANSACTION
-
-EXEC DBZ_SelectPersonagem
 
