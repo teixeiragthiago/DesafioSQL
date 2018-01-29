@@ -1,7 +1,3 @@
--- Get a list of databases
-SELECT name FROM sys.databases
-GO
-
 CREATE DATABASE db_Desafio;
 
 USE db_Desafio;
@@ -408,21 +404,7 @@ AS
         EXEC(@Comando)
     END 
 GO
---DROP PROCEDURE DBZ_InsertDinamica ---------------------------------------------
-GO 
-CREATE PROCEDURE DBZ_InsertDinamica(
-    @Tabela VARCHAR(50),
-    @Colunas VARCHAR(500),
-    @Valores VARCHAR(500)
-)
-AS
-    BEGIN 
-        DECLARE @Comando VARCHAR(2000)
-        SET @Comando = 'INSERT INTO ' + @Tabela + '('+@Colunas+') VALUES ' + ' (' +@Valores+')'
-        EXEC (@Comando)
-    END 
-GO 
------------------------------------------------------------------------------------
+----DROP PROCEDURE DBZ_ExcluiDinamica -------------------------------------------------------------------------------
 GO 
 CREATE PROCEDURE DBZ_ExcluiDinamica(
     @Tabela VARCHAR(50),
@@ -435,46 +417,31 @@ AS
         SET @Comando = 'DELETE FROM ' + @Tabela + ' WHERE ' +@ChaveTabela + ' = ' + @ValorChave 
         EXEC (@Comando)
     END 
-GO 
-------------------------------------------------------------------------------------
-CREATE PROCEDURE DBZ_AlteraDinamica(
-    @Tabela VARCHAR(50),
-    @ChaveTabela VARCHAR(50),
-    @ValorChave VARCHAR(50),
-)
-AS 
-    BEGIN 
-        DECLARE @Comando VARCHAR(2000)
-        SET @Comando = 'UPDATE ' + @Tabela + 'SET '   
-    END 
 ------------------------------------------------------------------------------------
 GO 
 --PROC PARA SELECIONAR DINAMICAMENTE
 BEGIN TRANSACTION 
-    EXEC DBZ_SelectDinamica 'tbl_Personagem', 'id_Personagem, nome_Personagem, powerLevel_Personagem', 'id_Personagem', '17'
+    EXEC DBZ_SelectDinamica 'tbl_infoRaca', 'id_Raca, desc_Raca', 'id_Raca', '5'
 ROLLBACK TRANSACTION 
 
 GO 
-
 --PROC PARA INSERIR DINAMICAMENTE
 BEGIN TRANSACTION 
-    EXEC DBZ_InsertDinamica 'tbl_Personagem', 'nome_Personagem, powerLevel_Personagem, id_Raca, id_Classe', 'Thiago, 10, 4, 2'
+    EXEC DBZ_InsertDinamica 'tbl_Classe', 'desc_Classe', 'NEUTR'
 ROLLBACK TRANSACTION 
 
 --PROC PARA EXCLUIR DINAMICAMENTE 
 BEGIN TRANSACTION 
-    EXEC DBZ_ExcluiDinamica 'tbl_Personagem', 'id_Personagem', '13'
+    EXEC DBZ_ExcluiDinamica 'tbl_Classe', 'id_Classe', '2'
 ROLLBACK TRANSACTION 
 
 --TRANSACTION LEFT JOIN
 BEGIN TRANSACTION 
     EXEC DBZ_LeftJoin 1
 ROLLBACK TRANSACTION
-
 GO 
 
 --COMEÇANDO USAR TRANSACTIONS
 BEGIN TRANSACTION
     EXEC DBZ_ExcluiPersonagem 12;
 ROLLBACK TRANSACTION
-
